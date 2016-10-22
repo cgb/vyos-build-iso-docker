@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function usage {
+  cat <<EOT
+Usage: vyos-build-iso <branch>
+where:
+  <branch> := [ lithium | helium ]
+EOT
+  exit 
+}
+
+function build_iso {
+  echo "building iso for branch: $branch"
+  
+  cd /data/build-iso
+  git pull
+  
+  git branch | grep -q "$branch" || (
+    git branch   $branch --track origin/$branch
+    git checkout $branch
+  )
+  
+  export PATH=/sbin:/usr/sbin:$PATH
+  autoreconf -i
+  ./configure
+  make iso
+  
+  mkdir -p "/data/output/$branch"
+  cp  /data/build-iso/livecd/VyOS-*.iso "/data/output/$branch"
+}
+
+branch=$1
+[[ $branch == "" ]] && usage
+build_iso "$branch"
