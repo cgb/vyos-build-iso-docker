@@ -2,7 +2,7 @@ FROM debian:squeeze
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ADD sources.list /etc/apt/sources.list
+ADD conf/sources.list /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' >/etc/apt/apt.conf.d/90ignore-release-date && apt-get update \
     && apt-get install -y wget \
     && wget -O - http://packages.vyos.net/vyos-release.gpg | apt-key add - \
